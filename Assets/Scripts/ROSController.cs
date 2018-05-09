@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Ros_CSharp;
 
+/// <summary>
+/// Basic example of communicating with ROS
+/// </summary>
 public class ROSController : MonoBehaviour
 {
     #region Fields
@@ -19,12 +22,7 @@ public class ROSController : MonoBehaviour
     /// <summary>
     /// Example publisher topic
     /// </summary>
-    public string pubOdometryTopic = "/stanford/odometry";
-
-    /// <summary>
-    /// Example subscriber topic
-    /// </summary>
-    public string subVector3Topic = "/stanford/vector3";
+    public string pubVector3Topic = "/stanford/vector3";
 
     /// <summary>
     /// Example subscriber topic for the custom node
@@ -34,7 +32,7 @@ public class ROSController : MonoBehaviour
     /// <summary>
     /// Example publisher
     /// </summary>
-    Publisher<Messages.nav_msgs.Odometry> pubOdometry;
+    Publisher<Messages.geometry_msgs.Vector3> pubVector3;
 
     /// <summary>
     /// Example subscriber
@@ -44,7 +42,7 @@ public class ROSController : MonoBehaviour
     /// <summary>
     /// Example subscriber for the custom node
     /// </summary>
-    //Subscriber<Messages.stanford_msgs.ExampleCustom> subCustomNode;
+    Subscriber<Messages.stanford_msgs.ExampleCustom> subCustomNode;
     #endregion
 
 
@@ -63,9 +61,9 @@ public class ROSController : MonoBehaviour
         }
         else
         {
-            if (GUILayout.Button("Publish Odometry", GUILayout.Width(250), GUILayout.Height(40)))
+            if (GUILayout.Button("Publish Vector3", GUILayout.Width(250), GUILayout.Height(40)))
             {
-                PublishOdometryMessage();
+                PublishVector3();
             }
         }
     }
@@ -88,11 +86,12 @@ public class ROSController : MonoBehaviour
             NodeHandle nodeHandle = new NodeHandle();
 
             // Setup publishers
-            pubOdometry = nodeHandle.advertise<Messages.nav_msgs.Odometry>(pubOdometryTopic, 1, false);
+            pubVector3 = nodeHandle.advertise<Messages.geometry_msgs.Vector3>(pubVector3Topic, 1, false);
+
 
             // Setup subscribers
-            subVector3 = nodeHandle.subscribe<Messages.geometry_msgs.Vector3>(subVector3Topic, 1, OnReceiveVector3);
-            //subCustomNode = nodeHandle.subscribe<Messages.stanford_msgs.ExampleCustom>(subCustomNodeTopic, 1, OnReceiveCustomNodeData);
+            subVector3 = nodeHandle.subscribe<Messages.geometry_msgs.Vector3>(pubVector3Topic, 1, OnReceiveVector3);
+            subCustomNode = nodeHandle.subscribe<Messages.stanford_msgs.ExampleCustom>(subCustomNodeTopic, 1, OnReceiveCustomNodeData);
         }
         else
         {
@@ -102,62 +101,23 @@ public class ROSController : MonoBehaviour
 
 
     /// <summary>
-    /// Publishes the example nav_msgs/Odometry message
+    /// Publishes the example geometry_msgs/Vector3 message
     /// </summary>
-    void PublishOdometryMessage()
+    void PublishVector3()
     {
-        Messages.nav_msgs.Odometry msg = new Messages.nav_msgs.Odometry()
-        {
-            header = new Messages.std_msgs.Header(),
-            pose = new Messages.geometry_msgs.PoseWithCovariance()
-            {
-                pose = new Messages.geometry_msgs.Pose()
-                {
-                    position = new Messages.geometry_msgs.Point(),
-                    orientation = new Messages.geometry_msgs.Quaternion()
-                }
-            },
-            twist = new Messages.geometry_msgs.TwistWithCovariance()
-            {
-                twist = new Messages.geometry_msgs.Twist()
-                {
-                    linear = new Messages.geometry_msgs.Vector3(),
-                    angular = new Messages.geometry_msgs.Vector3()
-                }
-            }
-        };
+        Messages.geometry_msgs.Vector3 msg = new Messages.geometry_msgs.Vector3();
 
-        Vector3 pos = transform.position;
-        Quaternion rot = transform.rotation;
-
-        // Position
-        msg.pose.pose.position.x = pos.x;
-        msg.pose.pose.position.y = pos.y;
-        msg.pose.pose.position.z = pos.z;
-
-        // Rotation
-        msg.pose.pose.orientation.x = rot.x;
-        msg.pose.pose.orientation.y = rot.y;
-        msg.pose.pose.orientation.z = rot.z;
-        msg.pose.pose.orientation.w = rot.w;
-
-        // Linear velocity
-        msg.twist.twist.linear.x = 0f;
-        msg.twist.twist.linear.y = 0f;
-        msg.twist.twist.linear.z = 0f;
-
-        // Angular velocity
-        msg.twist.twist.angular.x = 0f;
-        msg.twist.twist.angular.y = 0f;
-        msg.twist.twist.angular.z = 0f;
+        msg.x = 1.0f;
+        msg.y = 2.0f;
+        msg.z = 3.0f;
 
         // Publish
-        pubOdometry.publish(msg);
+        pubVector3.publish(msg);
     }
 
 
     /// <summary>
-    /// Callback fired when the subVector3Topic receives a message
+    /// Callback fired when the pubVector3 Topic receives a message
     /// </summary>
     /// <param name="data">Received message</param>
     void OnReceiveVector3(Messages.geometry_msgs.Vector3 data)
@@ -166,9 +126,15 @@ public class ROSController : MonoBehaviour
     }
 
 
-    //void OnReceiveCustomNodeData(Messages.stanford_msgs.ExampleCustom data)
-    //{
-
-    //}
+    /// <summary>
+    /// Callback fired when the subCustomNode Topic receives a message
+    /// </summary>
+    /// <param name="data">Received message</param>
+    void OnReceiveCustomNodeData(Messages.stanford_msgs.ExampleCustom data)
+    {
+        Debug.LogFormat("Received converted data from custom node: Input: ({0}, {1}, {2}), Output: ({3}, {4}, {5})", 
+            data.input.x.ToString("F4"), data.input.y.ToString("F4"), data.input.z.ToString("F4"),
+            data.output.x.ToString("F4"), data.output.y.ToString("F4"), data.output.z.ToString("F4"));
+    }
     #endregion
 }

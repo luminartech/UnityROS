@@ -4,16 +4,16 @@
 
 ros::Publisher pubCustom;
 
-void msg_cb (const geometry_msgs::Vector3 incomingMsg)
+void msg_cb (const geometry_msgs::Vector3ConstPtr& incomingMsg)
 {
   stanford_msgs::ExampleCustom outgoingMsg;
   
-  outgoingMsg.input.x = incomingMsg.x;
-  outgoingMsg.input.y = incomingMsg.y;
-  outgoingMsg.input.z = incomingMsg.z;
-  outgoingMsg.output.x = incomingMsg.z;
-  outgoingMsg.output.y = -incomingMsg.x;
-  outgoingMsg.output.z = incomingMsg.y;
+  outgoingMsg.input.x = incomingMsg->x;
+  outgoingMsg.input.y = incomingMsg->y;
+  outgoingMsg.input.z = incomingMsg->z;
+  outgoingMsg.output.x = incomingMsg->z;
+  outgoingMsg.output.y = -incomingMsg->x;
+  outgoingMsg.output.z = incomingMsg->y;
 
   pubCustom.publish(outgoingMsg);
 }
