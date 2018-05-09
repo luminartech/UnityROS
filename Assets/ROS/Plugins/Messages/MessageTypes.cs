@@ -6,6 +6,7 @@ namespace Messages
 	public enum MsgTypes
 	{
 		Unknown,
+        stanford_msgs__ExampleCustom,
 		std_msgs__Bool,
 		std_msgs__Byte,
 		std_msgs__ByteMultiArray,
