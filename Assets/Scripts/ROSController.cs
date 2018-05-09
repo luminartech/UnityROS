@@ -27,6 +27,11 @@ public class ROSController : MonoBehaviour
     public string subVector3Topic = "/stanford/vector3";
 
     /// <summary>
+    /// Example subscriber topic for the custom node
+    /// </summary>
+    public string subCustomNodeTopic = "/stanford/vector3converted";
+
+    /// <summary>
     /// Example publisher
     /// </summary>
     Publisher<Messages.nav_msgs.Odometry> pubOdometry;
@@ -35,6 +40,11 @@ public class ROSController : MonoBehaviour
     /// Example subscriber
     /// </summary>
     Subscriber<Messages.geometry_msgs.Vector3> subVector3;
+
+    /// <summary>
+    /// Example subscriber for the custom node
+    /// </summary>
+    //Subscriber<Messages.stanford_msgs.ExampleCustom> subCustomNode;
     #endregion
 
 
@@ -82,6 +92,7 @@ public class ROSController : MonoBehaviour
 
             // Setup subscribers
             subVector3 = nodeHandle.subscribe<Messages.geometry_msgs.Vector3>(subVector3Topic, 1, OnReceiveVector3);
+            //subCustomNode = nodeHandle.subscribe<Messages.stanford_msgs.ExampleCustom>(subCustomNodeTopic, 1, OnReceiveCustomNodeData);
         }
         else
         {
@@ -153,5 +164,11 @@ public class ROSController : MonoBehaviour
     {
         Debug.LogFormat("Received Vector3 message: ({0}, {1}, {2})", data.x.ToString("F4"), data.y.ToString("F4"), data.z.ToString("F4"));
     }
+
+
+    //void OnReceiveCustomNodeData(Messages.stanford_msgs.ExampleCustom data)
+    //{
+
+    //}
     #endregion
 }

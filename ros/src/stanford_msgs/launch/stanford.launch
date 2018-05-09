@@ -1,0 +1,8 @@
+<launch>
+  <node
+    pkg="stanford_msgs"
+    type="example_custom_node"
+    name="stanford_example_node"
+    />
+</launch>
+
