@@ -8,4 +8,4 @@ Requirements:
 - Unity 2018.1.0f2 (https://beta.unity3d.com/download/170f0691b973/public_download.html)
 - ROS Kinetic Kame Full Install (http://wiki.ros.org/kinetic/Installation/Ubuntu)
 
-Further documentation/instructions coming soon.
+Further documentation/instructions are available in the [Wiki](https://github.com/luminartech/UnityStanfordROS/wiki).
